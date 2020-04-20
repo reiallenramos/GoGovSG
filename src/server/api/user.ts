@@ -20,15 +20,15 @@ const router = Express.Router()
 function validateUrlRetrieval(
   req: Express.Request,
   res: Express.Response,
-  next: Express.NextFunction
+  next: Express.NextFunction,
 ) {
   const { userId } = req.body
 
   if (!userId) {
     res.badRequest(
       jsonMessage(
-        'Some or all required arguments missing: userId'
-      )
+        'Some or all required arguments missing: userId',
+      ),
     )
   }
 
@@ -44,8 +44,8 @@ function validateUrls(req: Express.Request, res: Express.Response, next: Express
   if (!(userId && longUrl && shortUrl)) {
     res.badRequest(
       jsonMessage(
-        'Some or all of required arguments are missing: userId, longUrl, shortUrl'
-      )
+        'Some or all of required arguments are missing: userId, longUrl, shortUrl',
+      ),
     )
     return
   }
@@ -60,16 +60,16 @@ function validateUrls(req: Express.Request, res: Express.Response, next: Express
   if (!isValidShortUrl(shortUrl)) {
     res.badRequest(
       jsonMessage(
-        'Short links should only consist of lowercase letters, numbers and hyphens.'
-      )
+        'Short links should only consist of lowercase letters, numbers and hyphens.',
+      ),
     )
     return
   }
 
   // Do not allow URLs to blacklisted sites
-  if (blacklist.some(bl => longUrl.includes(bl))) {
+  if (blacklist.some((bl) => longUrl.includes(bl))) {
     res.badRequest(
-      jsonMessage('Creation of URLs to link shortener sites prohibited.')
+      jsonMessage('Creation of URLs to link shortener sites prohibited.'),
     )
     return
   }
@@ -88,8 +88,8 @@ function validateState(req: Express.Request, res: Express.Response, next: Expres
   if (!(userId && shortUrl && state)) {
     res.badRequest(
       jsonMessage(
-        'Some or all required arguments are missing: userId, shortUrl, state.'
-      )
+        'Some or all required arguments are missing: userId, shortUrl, state.',
+      ),
     )
     return
   }
@@ -97,8 +97,8 @@ function validateState(req: Express.Request, res: Express.Response, next: Expres
   if (![ACTIVE, INACTIVE].includes(state)) {
     res.badRequest(
       jsonMessage(
-        `state parameter must be one of {${ACTIVE}, ${INACTIVE}}.`
-      )
+        `state parameter must be one of {${ACTIVE}, ${INACTIVE}}.`,
+      ),
     )
   }
 
@@ -126,10 +126,10 @@ router.post('/url', validateUrls, async (req, res) => {
     }
 
     // Success
-    const result = await sequelize.transaction(t => (
+    const result = await sequelize.transaction((t) => (
       Url.create(
         { userId: user.id, longUrl, shortUrl },
-        { transaction: t }
+        { transaction: t },
       )
     ))
 
@@ -157,7 +157,7 @@ router.patch('/url/ownership', async (req, res) => {
 
     if (!url) {
       res.notFound(
-        jsonMessage(`Short link "${shortUrl}" not found for user.`)
+        jsonMessage(`Short link "${shortUrl}" not found for user.`),
       )
     }
 
@@ -179,10 +179,10 @@ router.patch('/url/ownership', async (req, res) => {
     }
 
     // Success
-    const result = await sequelize.transaction(t => (
+    const result = await sequelize.transaction((t) => (
       url.update(
         { userId: newUserId },
-        { transaction: t }
+        { transaction: t },
       )
     ))
     res.ok(result)
@@ -211,14 +211,14 @@ router.patch('/url/edit', validateUrls, async (req, res) => {
 
     if (!url) {
       res.notFound(
-        jsonMessage(`Short link "${shortUrl}" not found for user.`)
+        jsonMessage(`Short link "${shortUrl}" not found for user.`),
       )
     }
 
-    await sequelize.transaction(t => (
+    await sequelize.transaction((t) => (
       url.update(
         { longUrl },
-        { transaction: t }
+        { transaction: t },
       )
     ))
     res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
@@ -255,11 +255,11 @@ router.patch('/url', validateState, async (req, res) => {
 
     if (!url) {
       res.notFound(
-        jsonMessage(`Short link "${shortUrl}" not found for user.`)
+        jsonMessage(`Short link "${shortUrl}" not found for user.`),
       )
     }
 
-    await sequelize.transaction(t => (
+    await sequelize.transaction((t) => (
       url.update({ state }, { transaction: t })
     ))
     res.ok()
@@ -276,8 +276,8 @@ router.patch('/url', validateState, async (req, res) => {
     logger.error(`Error rendering URL active/inactive:\t${error}`)
     res.badRequest(
       jsonMessage(
-        `Unable to set state to ${state} for short link "${shortUrl}"`
-      )
+        `Unable to set state to ${state} for short link "${shortUrl}"`,
+      ),
     )
   }
 })
