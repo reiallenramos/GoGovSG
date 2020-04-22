@@ -28,6 +28,7 @@ services:
       - OG_URL=https://go.gov.sg
       - VALID_EMAIL_GLOB_EXPRESSION=*.gov.sg
       - LOGIN_MESSAGE=Your OTP might take awhile to get to you.
+      - ROTATED_LINKS=go.gov.sg/whatsapp,go.gov.sg/passport,go.gov.sg/spsc,go.gov.sg/sppr
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
